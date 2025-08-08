@@ -10,6 +10,7 @@ public class PlayerCam
     float mouseSensitivity = 0.1f;
     float xAxis = 0f;
     float xMinAxis = -180f;
+    Vector3 localDefault;
     float XAxis
     {
         get { return xAxis; }
@@ -27,10 +28,15 @@ public class PlayerCam
         get { return yAxis; }
         set { yAxis = Mathf.Clamp(value, yMinAxis, Mathf.Abs(yMinAxis)); }
     }
+    LayerMask layer;
     public PlayerCam(Transform tr)
     {
         playerTR = tr;
         camTR = Camera.main.transform;
+        localDefault = new Vector3(-0.6f, 0.8f,0f);
+        layer = new LayerMask();
+        layer += 1 << 6;
+        layer += 1 << 7;
     }
     // Update is called once per frame
     public void RotCamera(Vector2 vec)
@@ -42,7 +48,7 @@ public class PlayerCam
     }
 private void SetXRotation(float yAxis)
     {
-        YAxis -= yAxis* (mouseSensitivity/2f);
+        YAxis += yAxis* (mouseSensitivity/2f);
         camTR.localEulerAngles = new Vector3(YAxis, 0f, 0f);
         /*XAxis += Input.GetAxis("Mouse X");
         YAxis -= Input.GetAxis("Mouse Y");*/
@@ -56,7 +62,7 @@ private void SetXRotation(float yAxis)
     }
     private void SetYPos(float yAxis)
     {
-        camTR.localPosition = Vector3.zero-(GetCircle(yAxis/Mathf.Abs(yMinAxis))*3f);
+        camTR.localPosition = localDefault - (GetCircle(yAxis/Mathf.Abs(yMinAxis))*3f);//3f == dist
     }
     public Vector3 GetCircle(float a)
     {
@@ -65,9 +71,9 @@ private void SetXRotation(float yAxis)
     public void InfoRay()
     {
         Ray ray = new Ray(camTR.position, camTR.forward);
-        if (Physics.Raycast(ray,40f,1<<6))
+        if (Physics.Raycast(ray,out RaycastHit info,40f,layer))
         {
-
+            GameManager.GetInstance.infoData[info.collider].Invoke();
         }
     }
 }
