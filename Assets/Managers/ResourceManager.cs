@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -10,13 +12,32 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.U2D;
 
-public class ResourceManager : SingleTon<ResourceManager>//ALL : (250707)싱글톤 기반의 비동기 로딩 스크립트 가능하면 제가 캐싱해둔걸 사용하겠지만 알아두면 작업에 수월 할 것 같아 추가합니다
+public class ResourceManager : SingleTon<ResourceManager>
 {
-    private bool isLoadAble<T>(T instance) { return instance != null; }
+    private Dictionary<string, string> interactionInfo;
+    public Dictionary<string, string> InteractionInfo
+    {
+        get { return interactionInfo; }
+    }
+    public Dictionary<string,string> interactionDatas;
+
     //메니저 인스턴스 생성시 실행되는 함수
     protected override void Init()
     {
         base.Init();
+        interactionDatas = new Dictionary<string, string>();
+        LoadAsync<InteractionData>("InteractionData", (result) =>
+        {
+            for (int i = 0; i < result.InteractionInfo.Count; i++)
+            {
+                interactionDatas.Add(result.InteractionInfo[i].name, result.InteractionInfo[i].description);
+            }
+        });
+    }
+    protected override void Reset()
+    {
+        base.Reset();
+
     }
     /// <summary>
     /// 
@@ -41,9 +62,10 @@ public class ResourceManager : SingleTon<ResourceManager>//ALL : (250707)싱글톤 
 
     private string GetSavePath() => Application.persistentDataPath;
 
-    public bool SaveData<T>(T data, string fileName, bool isOverride)
+    public bool SaveJSonData<T>(T data, string fileName, bool isOverride,bool isSaveFile)
     {
-        string path = Path.Combine(GetSavePath(), fileName);
+        string path = isSaveFile ? Path.Combine(GetSavePath(), fileName) : Path.Combine("./Assets/DataSheets/", fileName);
+
         Debug.Log(path);
         if (File.Exists(path))
         {
@@ -72,9 +94,9 @@ public class ResourceManager : SingleTon<ResourceManager>//ALL : (250707)싱글톤 
         }
         return false;
     }
-    public T LoadData<T>(string fileName) where T : new()
+    public T LoadJSonData<T>(string fileName,bool isSaveFile) where T : new()
     {
-        string path = Path.Combine(GetSavePath(), fileName);
+        string path = isSaveFile? Path.Combine(GetSavePath(), fileName) : Path.Combine("./Assets/DataSheets/", fileName);
 
         if (File.Exists(path))
         {
@@ -130,6 +152,7 @@ public class ResourceManager : SingleTon<ResourceManager>//ALL : (250707)싱글톤 
         }
         return result;
     }
+   
     /// <summary>
     /// 
     /// </summary>

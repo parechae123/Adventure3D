@@ -165,7 +165,7 @@
                 {
                     "name": "",
                     "id": "8825988c-00fd-48f4-8943-1e0a67382bf3",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -187,6 +187,54 @@
                 {
                     "name": "",
                     "id": "4097d3f4-5f5e-4766-9ccd-32f014509487",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false)",
+                    "groups": "",
+                    "action": "MouseDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Interactions",
+            "id": "dcee7fd2-776e-4151-956c-fb5e9cf4e7e0",
+            "actions": [
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "0ffa2a98-3eaf-4ef7-88ea-7570e2d20c13",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MouseDelta",
+                    "type": "Value",
+                    "id": "e9a5ba73-3fc8-4229-9f20-1025f28663a0",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "79603527-2124-4f8c-a8dd-109ebbc93cd5",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c9ebe286-fd5d-4b63-b4e6-0f90e0b26152",
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "InvertVector2(invertX=false)",

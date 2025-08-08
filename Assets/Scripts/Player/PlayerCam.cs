@@ -42,7 +42,7 @@ public class PlayerCam
     }
 private void SetXRotation(float yAxis)
     {
-        YAxis -= yAxis* mouseSensitivity;
+        YAxis -= yAxis* (mouseSensitivity/2f);
         camTR.localEulerAngles = new Vector3(YAxis, 0f, 0f);
         /*XAxis += Input.GetAxis("Mouse X");
         YAxis -= Input.GetAxis("Mouse Y");*/

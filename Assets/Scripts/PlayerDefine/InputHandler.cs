@@ -13,11 +13,11 @@ namespace PlayerDefine
     public class InputHandler
     {
         // 인풋시스템 - C# 제너레이트
-        PlayerControl input;
+        public PlayerControl input;
         public Action<Vector3> OnMove;
-        public Action OnInteraction;
         public Action OnJump;
         public Action<Vector2> OnMouseDelta;
+
         public Vector3 dirr;
         public InputHandler(Action<Vector3> moveAction,Action jumpAction, Action<Vector2> mouseAction)
         {
@@ -29,11 +29,19 @@ namespace PlayerDefine
 
             input.Player.Move.performed += Move;
             input.Player.Move.canceled += Move;
-            input.Player.Interaction.started += Interaction;
             input.Player.Jump.started += Jump;
             input.Player.Enable();
             input.Player.MouseDelta.performed += MouseDelta;
+            input.Interactions.MouseDelta.performed += MouseDelta;
             //input.Player.Interaction.started += OnJump;
+        }
+        public void DisablePlayer()
+        {
+            input.Player.Disable();
+        }
+        public void EnablePlayer()
+        {
+            input.Player.Enable();
         }
         public void InputUpdate()
         {
@@ -53,10 +61,6 @@ namespace PlayerDefine
         void Jump(CallbackContext cb)
         {
             OnJump?.Invoke();
-        }
-        void Interaction(CallbackContext cb)
-        {
-            OnInteraction?.Invoke();
         }
         void MouseDelta(CallbackContext cb)
         {

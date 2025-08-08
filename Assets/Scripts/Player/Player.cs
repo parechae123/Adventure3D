@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     Rigidbody rb;
-    InputHandler input;
+    public static InputHandler input;
     IMoveHandler moveHandler;
     Stat stat;
     PlayerCam cam;
@@ -18,8 +18,9 @@ public class Player : MonoBehaviour
         stat = new Stat(100, 5f, 6f);
         moveHandler = new PlayerMoveHandler(rb,stat,transform);
         cam = new PlayerCam(transform);
-        input = new InputHandler(moveHandler.OnMove, moveHandler.OnJump, cam.RotCamera);
-
+        if(input==null)input = new InputHandler(moveHandler.OnMove, moveHandler.OnJump, cam.RotCamera);
+        else { Destroy(gameObject);Debug.LogError("중복된 플레이어 객체가 있습니다"); }
+        Cursor.visible = false;
     }
     void Start()
     {
@@ -37,5 +38,7 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == 3) moveHandler.IsGround();
+
+        if (collision.gameObject.layer == 6) GameManager.GetInstance.interactionDict[collision.collider].Invoke(rb);
     }
 }
