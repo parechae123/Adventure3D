@@ -17,16 +17,19 @@ namespace PlayerDefine
         public Action<Vector3> OnMove;
         public Action OnJump;
         public Action<Vector2> OnMouseDelta;
-
+        public Action infoKey;
         public Vector3 dirr;
-        public InputHandler(Action<Vector3> moveAction,Action jumpAction, Action<Vector2> mouseAction)
+        public InputHandler(Action<Vector3> moveAction,Action jumpAction, Action<Vector2> mouseAction, Action info)
         {
             input = new PlayerControl();           
 
             OnMove = moveAction;
             OnJump = jumpAction;
             OnMouseDelta = mouseAction;
+            infoKey = info;
 
+
+            input.Player.OnInfoKey.performed += OnInfoKey;
             input.Player.Move.performed += Move;
             input.Player.Move.canceled += Move;
             input.Player.Jump.started += Jump;
@@ -51,6 +54,10 @@ namespace PlayerDefine
         public void Init()
         {
             
+        }
+        void OnInfoKey(CallbackContext cb)
+        {
+            infoKey.Invoke();
         }
         void Move(CallbackContext cb)
         {

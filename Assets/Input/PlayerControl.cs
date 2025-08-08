@@ -46,7 +46,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Interaction"",
+                    ""name"": ""OnInfoKey"",
                     ""type"": ""Button"",
                     ""id"": ""1d424b2a-20c7-4086-995e-93f9a19cde74"",
                     ""expectedControlType"": ""Button"",
@@ -191,7 +191,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Interaction"",
+                    ""action"": ""OnInfoKey"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -266,6 +266,34 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI"",
+            ""id"": ""39e2f2e3-8006-4520-bf10-7cdf483a6d7f"",
+            ""actions"": [
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""ff148c43-ab3a-4f15-9db3-b3ed89b4ade9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d0e94be3-87be-44a0-a77b-a3d301f030b9"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -335,13 +363,16 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-        m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
+        m_Player_OnInfoKey = m_Player.FindAction("OnInfoKey", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_MouseDelta = m_Player.FindAction("MouseDelta", throwIfNotFound: true);
         // Interactions
         m_Interactions = asset.FindActionMap("Interactions", throwIfNotFound: true);
         m_Interactions_LeftClick = m_Interactions.FindAction("LeftClick", throwIfNotFound: true);
         m_Interactions_MouseDelta = m_Interactions.FindAction("MouseDelta", throwIfNotFound: true);
+        // UI
+        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
+        m_UI_Inventory = m_UI.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -405,7 +436,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
-    private readonly InputAction m_Player_Interaction;
+    private readonly InputAction m_Player_OnInfoKey;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_MouseDelta;
     public struct PlayerActions
@@ -414,7 +445,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public PlayerActions(@PlayerControl wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Look => m_Wrapper.m_Player_Look;
-        public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
+        public InputAction @OnInfoKey => m_Wrapper.m_Player_OnInfoKey;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @MouseDelta => m_Wrapper.m_Player_MouseDelta;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -432,9 +463,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
-            @Interaction.started += instance.OnInteraction;
-            @Interaction.performed += instance.OnInteraction;
-            @Interaction.canceled += instance.OnInteraction;
+            @OnInfoKey.started += instance.OnOnInfoKey;
+            @OnInfoKey.performed += instance.OnOnInfoKey;
+            @OnInfoKey.canceled += instance.OnOnInfoKey;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
@@ -451,9 +482,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
-            @Interaction.started -= instance.OnInteraction;
-            @Interaction.performed -= instance.OnInteraction;
-            @Interaction.canceled -= instance.OnInteraction;
+            @OnInfoKey.started -= instance.OnOnInfoKey;
+            @OnInfoKey.performed -= instance.OnOnInfoKey;
+            @OnInfoKey.canceled -= instance.OnOnInfoKey;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
@@ -531,6 +562,52 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         }
     }
     public InteractionsActions @Interactions => new InteractionsActions(this);
+
+    // UI
+    private readonly InputActionMap m_UI;
+    private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
+    private readonly InputAction m_UI_Inventory;
+    public struct UIActions
+    {
+        private @PlayerControl m_Wrapper;
+        public UIActions(@PlayerControl wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Inventory => m_Wrapper.m_UI_Inventory;
+        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public void AddCallbacks(IUIActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
+            @Inventory.started += instance.OnInventory;
+            @Inventory.performed += instance.OnInventory;
+            @Inventory.canceled += instance.OnInventory;
+        }
+
+        private void UnregisterCallbacks(IUIActions instance)
+        {
+            @Inventory.started -= instance.OnInventory;
+            @Inventory.performed -= instance.OnInventory;
+            @Inventory.canceled -= instance.OnInventory;
+        }
+
+        public void RemoveCallbacks(IUIActions instance)
+        {
+            if (m_Wrapper.m_UIActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IUIActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public UIActions @UI => new UIActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -580,7 +657,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
-        void OnInteraction(InputAction.CallbackContext context);
+        void OnOnInfoKey(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnMouseDelta(InputAction.CallbackContext context);
     }
@@ -588,5 +665,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     {
         void OnLeftClick(InputAction.CallbackContext context);
         void OnMouseDelta(InputAction.CallbackContext context);
+    }
+    public interface IUIActions
+    {
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

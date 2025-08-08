@@ -13,7 +13,7 @@ namespace Defines
         void OnMove(Vector3 vec);
         void OnJump();
 
-        void IsGround();
+        void IsGround(bool isOnGround);
     }
     public class PlayerMoveHandler : IMoveHandler
     {
@@ -45,9 +45,9 @@ namespace Defines
             rb.AddForce(Vector3.up * stat.JumpForce, ForceMode.Impulse);
         }
 
-        public void IsGround()
+        public void IsGround(bool isOnGround)
         {
-            isOnGround = true;
+            this.isOnGround = isOnGround;
         }
     }
 }

@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 using static UnityEngine.InputSystem.InputAction;
+using TMPro;
 
-interface IPlatformParts
+interface IInteraction
 {
     void CollisionInteract(Rigidbody rb);
     void ViewInfo();
-    static IPlatformParts Factory(PlatformType type,Transform tr)
+    static IInteraction Factory(PlatformType type,Transform tr)
     {
         switch (type)
         {
@@ -23,7 +24,7 @@ interface IPlatformParts
         return null;
     }
 }
-public class JumpPlatform : IPlatformParts
+public class JumpPlatform : IInteraction
 {
     public void CollisionInteract(Rigidbody rb)
     {
@@ -32,18 +33,20 @@ public class JumpPlatform : IPlatformParts
 
     public void ViewInfo()
     {
-        Debug.Log(ResourceManager.GetInstance.interactionDatas["jumpPlatform"]);
+        GameManager.GetInstance.printInfo.Invoke(ResourceManager.GetInstance.interactionDatas["jumpPlatform"]);
     }
 }
-public class DashPlatform : IPlatformParts
+public class DashPlatform : IInteraction
 {
     Transform tr;
     Rigidbody rb;
     Transform targetUI;
+    TextMeshProUGUI text;
     public DashPlatform(Transform tr)
     {
         this.tr = tr;
-        targetUI = GameObject.FindGameObjectsWithTag("UI").Where(x => x.gameObject.name == "DashPlatformPannel").First().transform;
+        targetUI = GameObject.FindGameObjectWithTag("Canvas").transform.Find("InteractionText");
+        text = targetUI.gameObject.GetComponentInChildren<TextMeshProUGUI>();
         targetUI.gameObject.SetActive(false);
     }
     public void CollisionInteract(Rigidbody rb)
@@ -54,10 +57,11 @@ public class DashPlatform : IPlatformParts
         Player.input.input.Interactions.LeftClick.performed += ClickAction;
         Player.input.input.Interactions.Enable();
         targetUI.gameObject.SetActive(true);
+        text.text = $"{Player.input.input.Interactions.LeftClick.GetBindingDisplayString(0)} To Player Fire";
     }
     public void ViewInfo()
     {
-        Debug.Log(ResourceManager.GetInstance.interactionDatas["dashPlatform"]);
+        GameManager.GetInstance.printInfo.Invoke(ResourceManager.GetInstance.interactionDatas["dashPlatform"]);
 
     }
     private void ClickAction(CallbackContext cb)

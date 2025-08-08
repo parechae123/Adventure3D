@@ -6,11 +6,13 @@ using UnityEngine;
 public class Platform : MonoBehaviour
 {
     [SerializeField]public PlatformType type;
-    IPlatformParts IPlatform;
+    IInteraction IPlatform;
     void Start()
     {
-        IPlatform = IPlatformParts.Factory(type,transform);
-        GameManager.GetInstance.interactionDict.Add(GetComponent<Collider>(), IPlatform.CollisionInteract);
+        Collider col = GetComponent<Collider>();
+        IPlatform = IInteraction.Factory(type,transform);
+        GameManager.GetInstance.interactionDict.Add(col, IPlatform.CollisionInteract);
+        GameManager.GetInstance.infoData.Add(col, IPlatform.ViewInfo);
     }
 }
 [Serializable]

@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Interaction",
+                    "name": "OnInfoKey",
                     "type": "Button",
                     "id": "1d424b2a-20c7-4086-995e-93f9a19cde74",
                     "expectedControlType": "Button",
@@ -169,7 +169,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interaction",
+                    "action": "OnInfoKey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -240,6 +240,34 @@
                     "processors": "InvertVector2(invertX=false)",
                     "groups": "",
                     "action": "MouseDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "39e2f2e3-8006-4520-bf10-7cdf483a6d7f",
+            "actions": [
+                {
+                    "name": "Inventory",
+                    "type": "Button",
+                    "id": "ff148c43-ab3a-4f15-9db3-b3ed89b4ade9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d0e94be3-87be-44a0-a77b-a3d301f030b9",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Inventory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
